@@ -1,0 +1,7 @@
+name: 'Create Date File and Display PWD'
+description: 'Creates a file with the current date and time as the filename and displays pwd'
+runs:
+  using: 'composite'
+  steps:
+    - run: ./entrypoint.sh
+      shell: bash
