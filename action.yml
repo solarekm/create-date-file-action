@@ -2,7 +2,15 @@ name: 'Create Date File and Display PWD'
 description: 'Creates a file with the current date and time as the filename and displays pwd'
 runs:
   using: 'composite'
+  outputs:
+    current_datetime: ${{ steps.get_datetime.outputs.datetime }}
   steps:
+    - id: get_datetime
+      run: |
+        datetime=$(date '+%Y-%m-%d_%H-%M-%S')
+        echo "datetime=$datetime" >> $GITHUB_OUTPUT
+      shell: bash
+
     - run: chmod +x entrypoint.sh
       shell: bash
       working-directory: ${{ github.action_path }}
