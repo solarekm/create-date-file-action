@@ -6,7 +6,7 @@ runs:
     - id: get_datetime
       run: |
         datetime=$(date '+%Y-%m-%d_%H-%M-%S')
-        echo "datetime=$datetime" >> $GITHUB_OUTPUT
+        echo "datetime=$datetime" >> $GITHUB_ENV
       shell: bash
 
     - run: chmod +x entrypoint.sh
@@ -18,6 +18,4 @@ runs:
       working-directory: ${{ github.action_path }}
 
 outputs:
-  current_datetime:
-    stepId: get_datetime
-    outputName: datetime
+  current_datetime: ${{ env.datetime }}
