@@ -3,5 +3,7 @@ description: 'Creates a file with the current date and time as the filename and 
 runs:
   using: 'composite'
   steps:
-    - run: ./entrypoint.sh
+    - run: |
+        chmod +x ././entrypoint.sh
+        ./entrypoint.sh
       shell: bash
