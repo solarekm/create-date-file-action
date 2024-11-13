@@ -6,7 +6,7 @@ runs:
     - id: get_datetime
       run: |
         datetime=$(date '+%Y-%m-%d_%H-%M-%S')
-        echo "datetime=$datetime" >> $GITHUB_ENV
+        echo $datetime > datetime.txt
       shell: bash
 
     - run: chmod +x entrypoint.sh
@@ -17,5 +17,8 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}
 
+    - id: set_output
+      run: echo "current_datetime=$(cat datetime.txt)" >> $GITHUB_ENV
+
 outputs:
-  current_datetime: ${{ env.datetime }}
+  current_datetime: ${{ env.current_datetime }}
