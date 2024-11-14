@@ -1,25 +1,33 @@
-name: 'Create Date File and Display PWD'
-description: 'Creates a file with the current date and time as the filename and displays pwd'
+name: 'Create Date File and Outputs'
+description: 'Creates a file with the current date and time as the filename and exposes outputs in multiple steps'
 runs:
   using: 'composite'
   steps:
-    - id: get_datetime
+    # Krok 1: Tworzenie pliku z aktualną datą i godziną
+    - id: create_datetime_file
       run: |
         datetime=$(date '+%Y-%m-%d_%H-%M-%S')
         echo $datetime > datetime.txt
+        echo "datetime=$datetime" >> $GITHUB_OUTPUT
       shell: bash
 
-    - run: chmod +x entrypoint.sh
-      shell: bash
-      working-directory: ${{ github.action_path }}
-
-    - run: ./entrypoint.sh
-      shell: bash
-      working-directory: ${{ github.action_path }}
-
-    - id: set_output
-      run: echo "::set-output name=current_datetime::$(cat datetime.txt)"
+    # Krok 2: Użycie zmiennej z kroku 1, utworzenie nowej zmiennej i wystawienie jej na output
+    - id: use_datetime_create_var1
+      run: |
+        datetime_var1="First output based on datetime: ${{ steps.create_datetime_file.outputs.datetime }}"
+        echo "var1=$datetime_var1" >> $GITHUB_OUTPUT
       shell: bash
 
-    - run: cat $GITHUB_OUTPUT
+    # Krok 3: Użycie zmiennej z kroku 1, utworzenie kolejnej zmiennej i wystawienie jej na output
+    - id: use_datetime_create_var2
+      run: |
+        datetime_var2="Second output using var1: ${{ steps.use_datetime_create_var1.outputs.var1 }}"
+        echo "var2=$datetime_var2" >> $GITHUB_OUTPUT
+      shell: bash
+
+    # Krok 4: Użycie zmiennych z kroków 1 i 2 do stworzenia trzeciej zmiennej i wystawienie jej na output
+    - id: use_var1_var2_create_var3
+      run: |
+        combined_var="Combined output using datetime and var2: ${{ steps.create_datetime_file.outputs.datetime }} & ${{ steps.use_datetime_create_var2.outputs.var2 }}"
+        echo "var3=$combined_var" >> $GITHUB_OUTPUT
       shell: bash
