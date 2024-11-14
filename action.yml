@@ -1,51 +1,60 @@
-name: "Create Date and Time File Action"
-description: "Creates a file with the current date and time, and sets output variables"
+name: "Create Date File Action"
+description: "Creates a file with the current date and time as the filename and sets multiple outputs."
 runs:
   using: "composite"
   steps:
-    - name: Create datetime file
+    - name: Create datetime file and output datetime
       id: step1
-      shell: bash
+      shell: python
       run: |
-        datetime=$(date '+%Y-%m-%d_%H-%M-%S')
-        echo $datetime > datetime.txt
-        echo "datetime=$datetime" >> $GITHUB_OUTPUT
-        echo "$GITHUB_OUTPUT"
-    
-    - name: Create var1 based on datetime
+        from datetime import datetime
+        import os
+
+        # Step 1: Create datetime file and set output
+        current_datetime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        with open(f"{current_datetime}.txt", "w") as f:
+            f.write("This is a file created with Python.")
+        
+        print(f"datetime={current_datetime}", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
+
+    - name: Create var1 output
       id: step2
-      shell: bash
+      shell: python
       run: |
-        datetime_var1="First output based on datetime: ${{ steps.step1.outputs.datetime }}"
-        echo "var1=$datetime_var1" >> $GITHUB_OUTPUT
-        cat "$GITHUB_OUTPUT"
+        datetime_value = os.environ['datetime']
+        var1 = f"First output based on datetime: {datetime_value}"
+        
+        print(f"var1={var1}", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
 
-    - name: Create var2 using var1
+    - name: Create var2 output using var1
       id: step3
-      shell: bash
+      shell: python
       run: |
-        datetime_var2="Second output using var1: ${{ steps.step2.outputs.var1 }}"
-        echo "var2=$datetime_var2" >> $GITHUB_OUTPUT
-        cat "$GITHUB_OUTPUT"
+        var1_value = os.environ['var1']
+        var2 = f"Second output using var1: {var1_value}"
 
-    - name: Create combined var3 using datetime and var2
+        print(f"var2={var2}", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
+
+    - name: Create combined var output using datetime and var2
       id: step4
-      shell: bash
+      shell: python
       run: |
-        combined_var="Combined output using datetime and var2: ${{ steps.step1.outputs.datetime }} & ${{ steps.step3.outputs.var2 }}"
-        echo "var3=$combined_var" >> $GITHUB_OUTPUT
-        cat "$GITHUB_OUTPUT"
+        datetime_value = os.environ['datetime']
+        var2_value = os.environ['var2']
+        combined_var = f"Combined output using datetime and var2: {datetime_value} & {var2_value}"
+
+        print(f"var3={combined_var}", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
 
 outputs:
   datetime:
-    description: "The created datetime"
+    description: "Datetime output"
     value: ${{ steps.step1.outputs.datetime }}
   var1:
-    description: "Output based on datetime"
+    description: "Var1 output"
     value: ${{ steps.step2.outputs.var1 }}
   var2:
-    description: "Second output using var1"
+    description: "Var2 output"
     value: ${{ steps.step3.outputs.var2 }}
   var3:
-    description: "Combined output using datetime and var2"
+    description: "Combined output"
     value: ${{ steps.step4.outputs.var3 }}
