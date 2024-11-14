@@ -9,6 +9,7 @@ runs:
         datetime=$(date '+%Y-%m-%d_%H-%M-%S')
         echo $datetime > datetime.txt
         echo "datetime=$datetime" >> $GITHUB_OUTPUT
+        echo $GITHUB_OUTPUT
       shell: bash
 
     # Krok 2: Użycie zmiennej z kroku 1, utworzenie nowej zmiennej i wystawienie jej na output
@@ -16,6 +17,7 @@ runs:
       run: |
         datetime_var1="First output based on datetime: ${{ steps.create_datetime_file.outputs.datetime }}"
         echo "var1=$datetime_var1" >> $GITHUB_OUTPUT
+        echo $GITHUB_OUTPUT
       shell: bash
 
     # Krok 3: Użycie zmiennej z kroku 1, utworzenie kolejnej zmiennej i wystawienie jej na output
@@ -23,6 +25,7 @@ runs:
       run: |
         datetime_var2="Second output using var1: ${{ steps.use_datetime_create_var1.outputs.var1 }}"
         echo "var2=$datetime_var2" >> $GITHUB_OUTPUT
+        echo $GITHUB_OUTPUT
       shell: bash
 
     # Krok 4: Użycie zmiennych z kroków 1 i 2 do stworzenia trzeciej zmiennej i wystawienie jej na output
@@ -30,4 +33,5 @@ runs:
       run: |
         combined_var="Combined output using datetime and var2: ${{ steps.create_datetime_file.outputs.datetime }} & ${{ steps.use_datetime_create_var2.outputs.var2 }}"
         echo "var3=$combined_var" >> $GITHUB_OUTPUT
+        echo $GITHUB_OUTPUT
       shell: bash
