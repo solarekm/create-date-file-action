@@ -15,34 +15,53 @@ runs:
         with open(f"{current_datetime}.txt", "w") as f:
             f.write("This is a file created with Python.")
         
+        # Set the datetime as output
         print(f"datetime={current_datetime}", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
 
     - name: Create var1 output
       id: step2
       shell: python
       run: |
+        import os
+        
+        # Retrieve datetime from environment
         datetime_value = os.environ['datetime']
+        
+        # Create first variable based on datetime
         var1 = f"First output based on datetime: {datetime_value}"
         
+        # Set var1 as output
         print(f"var1={var1}", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
 
     - name: Create var2 output using var1
       id: step3
       shell: python
       run: |
+        import os
+        
+        # Retrieve var1 from environment
         var1_value = os.environ['var1']
+        
+        # Create second variable using var1
         var2 = f"Second output using var1: {var1_value}"
 
+        # Set var2 as output
         print(f"var2={var2}", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
 
     - name: Create combined var output using datetime and var2
       id: step4
       shell: python
       run: |
+        import os
+        
+        # Retrieve datetime and var2 from environment
         datetime_value = os.environ['datetime']
         var2_value = os.environ['var2']
+        
+        # Create combined variable
         combined_var = f"Combined output using datetime and var2: {datetime_value} & {var2_value}"
 
+        # Set combined_var as output
         print(f"var3={combined_var}", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
 
 outputs:
