@@ -1,37 +1,47 @@
-name: 'Create Date File and Outputs'
-description: 'Creates a file with the current date and time as the filename and exposes outputs in multiple steps'
+name: "Create Date and Time File Action"
+description: "Creates a file with the current date and time, and sets output variables"
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-    # Krok 1: Tworzenie pliku z aktualną datą i godziną
-    - id: create_datetime_file
+    - name: Create datetime file
+      id: step1
+      shell: bash
       run: |
         datetime=$(date '+%Y-%m-%d_%H-%M-%S')
         echo $datetime > datetime.txt
         echo "datetime=$datetime" >> $GITHUB_OUTPUT
-        echo $GITHUB_OUTPUT
+    
+    - name: Create var1 based on datetime
+      id: step2
       shell: bash
-
-    # Krok 2: Użycie zmiennej z kroku 1, utworzenie nowej zmiennej i wystawienie jej na output
-    - id: use_datetime_create_var1
       run: |
-        datetime_var1="First output based on datetime: ${{ steps.create_datetime_file.outputs.datetime }}"
+        datetime_var1="First output based on datetime: ${{ steps.step1.outputs.datetime }}"
         echo "var1=$datetime_var1" >> $GITHUB_OUTPUT
-        echo $GITHUB_OUTPUT
-      shell: bash
 
-    # Krok 3: Użycie zmiennej z kroku 1, utworzenie kolejnej zmiennej i wystawienie jej na output
-    - id: use_datetime_create_var2
+    - name: Create var2 using var1
+      id: step3
+      shell: bash
       run: |
-        datetime_var2="Second output using var1: ${{ steps.use_datetime_create_var1.outputs.var1 }}"
+        datetime_var2="Second output using var1: ${{ steps.step2.outputs.var1 }}"
         echo "var2=$datetime_var2" >> $GITHUB_OUTPUT
-        echo $GITHUB_OUTPUT
-      shell: bash
 
-    # Krok 4: Użycie zmiennych z kroków 1 i 2 do stworzenia trzeciej zmiennej i wystawienie jej na output
-    - id: use_var1_var2_create_var3
-      run: |
-        combined_var="Combined output using datetime and var2: ${{ steps.create_datetime_file.outputs.datetime }} & ${{ steps.use_datetime_create_var2.outputs.var2 }}"
-        echo "var3=$combined_var" >> $GITHUB_OUTPUT
-        echo $GITHUB_OUTPUT
+    - name: Create combined var3 using datetime and var2
+      id: step4
       shell: bash
+      run: |
+        combined_var="Combined output using datetime and var2: ${{ steps.step1.outputs.datetime }} & ${{ steps.step3.outputs.var2 }}"
+        echo "var3=$combined_var" >> $GITHUB_OUTPUT
+
+outputs:
+  datetime:
+    description: "The created datetime"
+    value: ${{ steps.step1.outputs.datetime }}
+  var1:
+    description: "Output based on datetime"
+    value: ${{ steps.step2.outputs.var1 }}
+  var2:
+    description: "Second output using var1"
+    value: ${{ steps.step3.outputs.var2 }}
+  var3:
+    description: "Combined output using datetime and var2"
+    value: ${{ steps.step4.outputs.var3 }}
