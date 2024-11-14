@@ -7,8 +7,8 @@ runs:
       id: step1
       shell: python
       run: |
-        from datetime import datetime
         import os
+        from datetime import datetime
         
         # Step 1: Create datetime file and set output
         current_datetime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
