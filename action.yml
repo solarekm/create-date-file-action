@@ -18,7 +18,7 @@ runs:
       run: |
         datetime_var1="First output based on datetime: ${{ steps.step1.outputs.datetime }}"
         echo "var1=$datetime_var1" >> $GITHUB_OUTPUT
-        echo "$GITHUB_OUTPUT"
+        cat "$GITHUB_OUTPUT"
 
     - name: Create var2 using var1
       id: step3
@@ -26,7 +26,7 @@ runs:
       run: |
         datetime_var2="Second output using var1: ${{ steps.step2.outputs.var1 }}"
         echo "var2=$datetime_var2" >> $GITHUB_OUTPUT
-        echo "$GITHUB_OUTPUT"
+        cat "$GITHUB_OUTPUT"
 
     - name: Create combined var3 using datetime and var2
       id: step4
@@ -34,7 +34,7 @@ runs:
       run: |
         combined_var="Combined output using datetime and var2: ${{ steps.step1.outputs.datetime }} & ${{ steps.step3.outputs.var2 }}"
         echo "var3=$combined_var" >> $GITHUB_OUTPUT
-        echo "$GITHUB_OUTPUT"
+        cat "$GITHUB_OUTPUT"
 
 outputs:
   datetime:
