@@ -9,13 +9,13 @@ runs:
       run: |
         from datetime import datetime
         import os
-
+        
         # Step 1: Create datetime file and set output
         current_datetime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         with open(f"{current_datetime}.txt", "w") as f:
             f.write("This is a file created with Python.")
         
-        # Set the datetime as output
+        # Set the datetime as output (stored in $GITHUB_OUTPUT)
         print(f"datetime={current_datetime}", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
 
     - name: Create var1 output
@@ -24,8 +24,8 @@ runs:
       run: |
         import os
         
-        # Retrieve datetime from environment
-        datetime_value = os.environ['datetime']
+        # Retrieve datetime from step1 output
+        datetime_value = "${{ steps.step1.outputs.datetime }}"
         
         # Create first variable based on datetime
         var1 = f"First output based on datetime: {datetime_value}"
@@ -39,8 +39,8 @@ runs:
       run: |
         import os
         
-        # Retrieve var1 from environment
-        var1_value = os.environ['var1']
+        # Retrieve var1 from step2 output
+        var1_value = "${{ steps.step2.outputs.var1 }}"
         
         # Create second variable using var1
         var2 = f"Second output using var1: {var1_value}"
@@ -54,9 +54,9 @@ runs:
       run: |
         import os
         
-        # Retrieve datetime and var2 from environment
-        datetime_value = os.environ['datetime']
-        var2_value = os.environ['var2']
+        # Retrieve datetime and var2 from previous steps
+        datetime_value = "${{ steps.step1.outputs.datetime }}"
+        var2_value = "${{ steps.step3.outputs.var2 }}"
         
         # Create combined variable
         combined_var = f"Combined output using datetime and var2: {datetime_value} & {var2_value}"
